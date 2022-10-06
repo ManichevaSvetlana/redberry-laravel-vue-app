@@ -24,8 +24,14 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 require __DIR__.'/auth.php';
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/posts-get', [\App\Http\Controllers\PostController::class, 'get'])->name('posts.get');
+    Route::resource('/posts', \App\Http\Controllers\PostController::class)->names('posts');
+    Route::resource('/comments', \App\Http\Controllers\CommentController::class)->only(['store', 'index'])->names('comments');
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
+});
+
